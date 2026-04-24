@@ -1,0 +1,1056 @@
+<!--用以对于数据进行处理的网站-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> 报告系统 </title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        header {
+            background-color: #4cafaa;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+        }
+        main {
+            padding: 20px;
+        }
+        
+        th{
+            background-color: hsl(209, 88%, 67%);
+            text-align: center;
+            font-size: 1.2em;
+        }
+        td {
+            padding: 16px 15px;
+            text-align: center;
+            border-bottom: 1px solid #eef1f5;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            font-size: 1.05em;
+            position: relative;
+        }
+        /*可切换字体格式*/
+        .toggle-cell {
+            font-weight: 600;  /* 字体加粗 */
+            user-select: none;  /* 禁止文本被选中 */
+            cursor: pointer;  /* 鼠标悬停时显示手型指针 */
+        }
+
+        .toggle-cell[data-state="no"] {
+            background-color: #ffebee;  /* 未通过时的背景色 */
+            color: #e53935;  /* 未通过时的文字颜色 */
+        }
+
+        .toggle-cell[data-state="yes"] {
+            background-color: #e8f5e9;  /* 通过时的背景色 */
+            color: #43a047;  /* 通过时的文字颜色 */
+        
+        }
+        .report-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .report-section h2 {
+            margin-top: 0;
+        }
+        footer {
+            text-align: center;
+            padding: 10px;
+            background-color: #68af4c;
+            color: white;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="./cytek.png" alt="Company Logo" style="height: 50px; margin-right: 20px; vertical-align: middle;">       
+        <h1> 检测报告 </h1>
+    </header>
+    <main>
+        <section class="report-section">
+            <h2>Report Summary</h2>
+            <p>This section provides a brief summary of the test results.</p>
+        </section>
+        <section class="report-section">
+            <h2>检测报告</h2>
+            <!-- 为表格添加 id -->
+            <table id="dynamicTable" border="1" style="width: 100%; border-collapse: collapse;">
+                <tbody>
+                    <tr><!--第一行 -->
+                        <td style="width: 25%;" colspan="2"> 样品名称: </td> 
+                        <td style="width: 25%;" contenteditable="true" colspan="2"> </td>
+                        <td style="width: 100px;" colspan="2"> 样品编号: </td>
+                        <td style="width: 100px;" contenteditable="true" colspan="2"> </td>
+                    </tr>
+                    <tr><!--第二行 -->
+                        <td style="width: 100px;" colspan="2">检测起始时间:</td>
+                        <td style="width: 100px;" contenteditable="true" colspan="2"> </td>
+                        <td style="width: 100px;" colspan="2">检测结束时间：</td>
+                        <td style="width: 100px;" contenteditable="true" colspan="2"> </td>
+                    </tr>    
+                    <tr>
+                        <th colspan="2">测试类别</th>
+                        <th >测试项目编号</th>
+                        <th >测试项目名称</th>
+                        <th>数据结果</th>
+                        <th>测试结果 </th>
+                        <th colspan="2">备注</th>
+                    </tr>
+            <!-- A 基础电测性能 -->        
+                    <tr>
+                        <td style="width: 100px;" class="cate" rowspan="15" >A.基础电测性能</td>
+                        <td style="width: 100px;" class="cate" rowspan="5">A1.热电阻测量性能</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 100px;"> A1.1 </td>
+                        <td style="width: 100px;"> RTD温度测量基本精度</td> 
+                        <td style="width: 50px;" contenteditable="true"></td>
+                        <td style="width: 50px;" class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td style="width: 100px;" contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>A1.2</td>
+                        <td>RTD测量激励电流源稳定性</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>A1.3</td>
+                        <td>RTD测量线性度与导线电阻补偿</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>                        
+                    </tr>
+                    <tr>
+                        <td>A1.4</td>
+                        <td>RTD测量分辨率</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>
+                    </tr>
+            <!-- A2 热电偶测量性能 -->        
+                    <tr>
+                        <td style="width: 10%;" class="cate" rowspan="7">A2.热电阻测量性能</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 10%;">A2.1</td>
+                        <td style="width: 10%;">TC微电压测量基本精度</td> 
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>A2.2</td>
+                        <td>TC温度换算精度验证 ​</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>A2.3</td>
+                        <td>冷端补偿精度​</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>                        
+                    </tr>
+                    <tr>
+                        <td>A2.4</td>
+                        <td>TC小信号测量噪声与稳定性​</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>A2.5</td>
+                        <td>输入阻抗与漏电流测试​</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>A2.6</td>
+                        <td>TC测量分辨率​</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>
+                    </tr>
+            <!-- A3 通用性能与环境适应性 -->  
+                    <tr>
+                        <td style="width: 10%;" class="cate" rowspan="3">A3.通用性能与环境适应性</td>
+                    </tr>
+                    <tr>
+                        <td>A3.1</td>
+                        <td>基础精度与环境温度关系(RTD/TC)</td> 
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>A3.2</td>
+                        <td>传感器类型自动识别与切换 ​</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>
+                    </tr>
+
+            <!-- B 稳定性与漂移 -->
+                    <tr>
+                        <td class="cate" rowspan="12">B.稳定性与漂移</td>
+                        <td rowspan="4" class="sub-cate">温度系数(TC)</td>
+                    </tr>               
+                    <tr>
+                        <td>B1.1</td>
+                        <td>电阻测量TC(多量程)</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td>
+                    </tr>
+                    <tr>
+                        <td>B1.2</td>
+                        <td>电压测量TC(多量程)</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td></tr>
+                    <tr>
+                        <td>B1.3</td>
+                        <td>整机测温精度温度系数</td>
+                        <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                        <td contenteditable="true"></td></tr>
+            <tr>
+                <td rowspan="5" class="sub-cate">时间漂移</td>
+            </tr>
+            <tr>
+                <td>B2.1</td>
+                <td>短期稳定性(噪声)/长期漂移(24h/30d)</td>
+                <td contenteditable="true"></td>
+                        <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>B2.2</td>
+                <td>长期漂移（24h/30d）</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>B2.3</td>
+                <td>年稳定性</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>B2.4</td>
+                <td>开关热电动势测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td rowspan="3" class="sub-cate">供电影响稳定性</td>
+            </tr>
+            <tr>
+                <td>B3.1</td>
+                <td>电池电压跌落对精度的影响</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>B3.2</td>
+                <td>充电状态下的稳定性</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+
+            <!-- C 动态与抗干扰 -->
+            <tr>
+                <td class="cate" rowspan="8">C.动态与抗干扰性能</td>
+                <td rowspan="3" class="sub-cate">动态响应</td></tr>
+            <tr>
+                <td>C1.1</td>
+                <td>响应时间(T90)</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>C1.2</td>
+                <td>滤波器时间常数验证</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+
+            <tr>
+                <td rowspan="5" class="sub-cate">抗干扰能力</td></tr>
+            <tr>
+                <td>C2.1</td>
+                <td>工频周期滤波(NPLC)</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>C2.2</td>
+                <td>共模抑制比(CMRR)</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>C2.3</td>
+                <td>串扰测试(静态)</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>C2.4</td>
+                <td>供电瞬态抗干扰</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+
+            <!-- D 整机系统性能 -->
+            <tr>
+                <td class="cate" rowspan="11">D.整机系统性能</td>
+                <td rowspan="6" class="sub-cate">测温精度</td></tr>
+            <tr>
+                <td>D1.1</td>
+                <td>温度示值误差(标准传感器法)</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>D1.2</td>
+                <td>传感器激励自热效应</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>D1.3</ td>
+                <td>测量不确定度评估</ td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>D1.4</ td>
+                <td>不同传感器切换识别测试</ td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>D1.5</ td>
+                <td>全工况下的系统测温精度</ td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+
+            <tr><td rowspan="5" class="sub-cate">环境适应性</td></tr>
+            <tr>
+                <td>D2.1</td>
+                <td>高低温工作性能</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>D2.2</td>
+                <td>温度循环测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>D2.3</td>
+                <td>湿热稳定性测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>D2.4</td>
+                <td>低温启动与工作测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <!-- E 安全与合规 -->
+            <tr>
+                <td class="cate" rowspan="7">E.安全与合规</td>
+                <td rowspan="4" class="sub-cate">电气安全</td>
+            </tr>
+            <tr>
+                <td>E1.1</td>
+                <td>绝缘电阻测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>E1.2</td>
+                <td>耐压强度测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>E1.3</td>
+                <td>接地连续性测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+                </tr>
+
+            <tr>
+                <td rowspan="3" class="sub-cate">电磁兼容(EMC)</td></tr>
+            <tr>
+                <td>E2.1</td>
+                <td>静电放电抗扰度测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>E2.2</td>
+                <td>浪涌抗扰度测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <!-- F 功能与接口 -->
+            <tr>
+                <td class="cate" rowspan="10">F.功能与接口</td>
+                <td rowspan="5" class="sub-cate">智能功能</td></tr>
+            <tr>
+                <td>F1.1</td>
+                <td>传感器类型与系数配置验证</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>F1.2</td>
+                <td>传感器断裂检测功能测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>F1.3</td>
+                <td>校准功能与存储稳定性测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>F1.4</td>
+                <td>自动关机功能测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+
+            <tr>
+                <td rowspan="5" class="sub-cate">接口功能</td></tr>
+            <tr>
+                <td>F2.1</td>
+                <td>模拟输出精度测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td>F2.2</td>
+                <td>数字通信接口测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>F2.3</td>
+                <td>蓝牙通讯功能测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>F2.4</td>
+                <td>充电功能与状态指示测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+
+            <!-- G 多通道 -->
+            <tr>
+                <td class="cate" rowspan="10">G.多通道系统性能</td>
+                <td rowspan="3" class="sub-cate">通道一致性</td></tr>
+            <tr>
+                <td>G1.1</td>
+                <td>通道间偏差测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+                <td>G1.2</td>
+                <td>通道间串扰（动态）</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td></tr>
+            <tr>
+                <td rowspan="3" class="sub-cate">扫描性能</td></tr>
+            <tr>
+                <td>G2.1</td>
+                <td>扫描速率与精度关系</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>G2.2</td>
+                <td>通道切换稳定时间</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+
+            <tr>
+                <td rowspan="2" class="sub-cate">同步性与定时</td>
+            </tr>
+            <tr>
+                <td>G3.1</td>
+                <td>时间戳精度</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+
+            <tr>
+                <td rowspan="2" class="sub-cate">系统负载</td></tr>
+            <tr>
+                <td>G4.1</td>
+                <td>全通道工作下的温升</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                        <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                        未通过
+                    </td>
+                <td contenteditable="true"></td>
+            </tr>
+
+            <!-- H 人机交互 -->
+            <tr>
+                <td class="cate" rowspan="6">H.人机交互与显示</td>
+                <td rowspan="3" class="sub-cate">屏幕显示</td></tr>
+            <tr>
+                <td>H1.1</td>
+                <td>显示清晰度与可视角度测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>H1.2</td>
+                <td>背光功能测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td rowspan="3" class="sub-cate">单按键操作</td></tr>
+            <tr>
+                <td>H2.1</td>
+                <td>按键功能逻辑测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>H2.2</td>
+                <td>按键寿命测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td ></tr >
+
+            <!-- I 电池与功耗 -->
+            <tr>
+                <td class="cate" rowspan="6">I.电池与功耗</td>
+                <td rowspan="3" class="sub-cate">电池性能</td>
+            </tr>
+            <tr>
+                <td>I1.1</td>
+                <td>满电续航时间测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>I1.2</td>
+                <td>低电量报警与保护测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+
+            <tr>
+                <td rowspan="3" class="sub-cate">功耗管理</td>
+            </tr>
+            <tr>
+                <td>I2.1</td>
+                <td>待机功耗与静态电流测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>I2.2</td>
+                <td>不同工作模式下的功耗</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+
+            <!-- J 数据管理 -->
+            <tr>
+                <td class="cate" rowspan="5">J.数据管理与通讯</td>
+                <td rowspan="2" class="sub-cate">数据存储与导出</td>
+            </tr>
+            <tr>
+                <td>J1.1</td>
+                <td>蓝牙数据记录导出测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+
+            <tr>
+                <td rowspan="3" class="sub-cate">无线通讯可靠性</td>
+            </tr>
+            <tr>
+                <td>J2.1</td>
+                <td>蓝牙断线重连测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            <tr>
+                <td>J2.2</td>
+                <td>多设备连接兼容性测试</td>
+                <td contenteditable="true"></td>
+                <td class="toggle-cell" data-state="no" data-type="tech">
+                            <span class="status-indicator"></span>  <!-- 状态指示圆点 -->
+                            未通过
+                        </td>
+                <td contenteditable="true"></td>
+            </tr>
+            </tbody>
+            </table>
+            <button onclick="addRow()">Add Row</button>
+            <button onclick="deleteRow()">Delete Row</button>
+            <button onclick="saveTableAsExcel()">SAVE</button>
+        </section>
+        <section class="report-section">
+            <h2>Conclusion</h2>
+            <p>The overall performance is satisfactory, with some areas requiring improvement.</p>
+        </section>
+    </main>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取所有可切换的单元格
+            const toggleCells = document.querySelectorAll('.toggle-cell');
+            const overallStatusCells = document.querySelectorAll('.overall-status');
+            const toggleAllBtn = document.getElementById('toggle-all-btn');
+            const resetBtn = document.getElementById('reset-btn');
+            
+            // 更新统计信息
+            function updateStatistics() {
+                const totalProjects = document.querySelectorAll('tbody tr').length;
+                let passedProjects = 0;
+                
+                overallStatusCells.forEach(cell => {
+                    if (cell.textContent.trim() === '通过') {
+                        passedProjects++;
+                    }
+                });
+                
+                const failedProjects = totalProjects - passedProjects;
+                const passRate = totalProjects > 0 ? Math.round((passedProjects / totalProjects) * 100) : 0;
+                
+                document.getElementById('total-count').textContent = totalProjects;
+                document.getElementById('passed-count').textContent = passedProjects;
+                document.getElementById('failed-count').textContent = failedProjects;
+                document.getElementById('pass-rate').textContent = passRate + '%';
+            }
+            
+            // 更新单个项目的综合状态
+            function updateOverallStatus(row) {
+                const rowCells = row.querySelectorAll('.toggle-cell');
+                const overallCell = row.querySelector('.overall-status');
+                
+                let allPassed = true;
+                
+                rowCells.forEach(cell => {
+                    if (cell.getAttribute('data-state') === 'no') {
+                        allPassed = false;
+                    }
+                });
+                
+                if (allPassed) {
+                    overallCell.textContent = '通过';
+                    overallCell.style.color = '#43a047';
+                    overallCell.style.fontWeight = '600';
+                } else {
+                    overallCell.textContent = '未通过';
+                    overallCell.style.color = '#e53935';
+                    overallCell.style.fontWeight = '600';
+                }
+                
+                updateStatistics();
+            }
+            
+            // 处理单元格点击事件
+            toggleCells.forEach(cell => {
+                cell.addEventListener('click', function() {
+                    const currentState = this.getAttribute('data-state');
+                    const newState = currentState === 'yes' ? 'no' : 'yes';
+                    
+                    // 切换状态
+                    this.setAttribute('data-state', newState);
+                    
+                    if (newState === 'yes') {
+                        this.innerHTML = '<span class="status-indicator"></span>通过';
+                        this.style.backgroundColor = '#e8f5e9';
+                        this.style.color = '#43a047';
+                    } else {
+                        this.innerHTML = '<span class="status-indicator"></span>未通过';
+                        this.style.backgroundColor = '#ffebee';
+                        this.style.color = '#e53935';
+                    }
+                    
+                    // 更新所在行的综合状态
+                    const row = this.closest('tr');
+                    updateOverallStatus(row);
+                });
+            });
+            
+            // 全部设为通过按钮
+            toggleAllBtn.addEventListener('click', function() {
+                toggleCells.forEach(cell => {
+                    cell.setAttribute('data-state', 'yes');
+                    cell.innerHTML = '<span class="status-indicator"></span>通过';
+                    cell.style.backgroundColor = '#e8f5e9';
+                    cell.style.color = '#43a047';
+                });
+                
+                // 更新所有行的综合状态
+                document.querySelectorAll('tbody tr').forEach(row => {
+                    updateOverallStatus(row);
+                });
+                
+                // 更新按钮文本
+                this.textContent = '全部设为未通过';
+                this.style.background = 'linear-gradient(135deg, #e74c3c, #c0392b)';
+                
+                // 切换按钮功能
+                this.removeEventListener('click', arguments.callee);
+                this.addEventListener('click', function() {
+                    toggleCells.forEach(cell => {
+                        cell.setAttribute('data-state', 'no');
+                        cell.innerHTML = '<span class="status-indicator"></span>未通过';
+                        cell.style.backgroundColor = '#ffebee';
+                        cell.style.color = '#e53935';
+                    });
+                    
+                    document.querySelectorAll('tbody tr').forEach(row => {
+                        updateOverallStatus(row);
+                    });
+                    
+                    this.textContent = '全部设为通过';
+                    this.style.background = 'linear-gradient(135deg, #3498db, #2980b9)';
+                    
+                    this.removeEventListener('click', arguments.callee);
+                    this.addEventListener('click', arguments.callee);
+                });
+            });
+            
+            // 重置按钮
+            resetBtn.addEventListener('click', function() {
+                // 重置为初始状态
+                const initialStates = [
+                    ['no', 'yes', 'no'],  // 第一行
+                    ['yes', 'yes', 'yes'], // 第二行
+                    ['no', 'no', 'yes'],  // 第三行
+                    ['yes', 'yes', 'yes']  // 第四行
+                ];
+                
+                let cellIndex = 0;
+                document.querySelectorAll('tbody tr').forEach((row, rowIndex) => {
+                    const cells = row.querySelectorAll('.toggle-cell');
+                    cells.forEach((cell, cellRowIndex) => {
+                        const state = initialStates[rowIndex][cellRowIndex];
+                        cell.setAttribute('data-state', state);
+                        
+                        if (state === 'yes') {
+                            cell.innerHTML = '<span class="status-indicator"></span>通过';
+                            cell.style.backgroundColor = '#e8f5e9';
+                            cell.style.color = '#43a047';
+                        } else {
+                            cell.innerHTML = '<span class="status-indicator"></span>未通过';
+                            cell.style.backgroundColor = '#ffebee';
+                            cell.style.color = '#e53935';
+                        }
+                    });
+                    
+                    updateOverallStatus(row);
+                });
+                
+                // 重置"全部设为通过"按钮
+                toggleAllBtn.textContent = '全部设为通过';
+                toggleAllBtn.style.background = 'linear-gradient(135deg, #3498db, #2980b9)';
+            });
+            
+            // 初始统计
+            updateStatistics();
+        });
+
+        function addRow() {
+            // 获取表格的 tbody 元素
+            const table = document.getElementById('dynamicTable').getElementsByTagName('tbody')[0];
+            
+            // 创建一个新的行
+            const newRow = table.insertRow();
+            
+            const newCell1 = newRow.insertCell(0);
+            newCell1.textContent = 'Remark :'; // 设置第一列的内容
+            // 创建并添加单元格
+            const newCell2 = newRow.insertCell();
+            newCell2.colSpan = 6;
+            ewCell2.contentEditable = "true";
+        }
+
+        function deleteRow(){
+            const table = document.getElementById('dynamicTable').getElementsByTagName('tbody')[0];
+            table.deleteRow(-1);
+        }
+
+        function saveTableAsExcel() {
+            const table = document.getElementById('dynamicTable');
+            const tableHTML = table.outerHTML.replace(/ /g, '%20');
+
+            // 创建下载链接
+            const downloadLink = document.createElement('a');
+            const filename = 'table_export.xlsx';
+            const dataType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+
+            downloadLink.href = `data:${dataType},${tableHTML}`;
+            downloadLink.download = filename;
+
+            // 触发下载
+            document.body.appendChild(downloadLink);
+            downloadLink.click();
+            document.body.removeChild(downloadLink);
+        }
+
+            // 点击预览按钮
+    </script>
+</body>
+</html>
