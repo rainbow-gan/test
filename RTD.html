@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>实验数据处理与报告生成系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 30px 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+        
+        .subtitle {
+            font-size: 1.1em;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            padding: 30px;
+        }
+        
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .section {
+            background: #f8fafc;
+            border-radius: 10px;
+            padding: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+        
+        .section-title {
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #3498db;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title i {
+            color: #3498db;
+        }
+        
+        .data-input-area {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .input-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #2c3e50;
+        }
+        
+        input[type="text"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: white;
+        }
+        
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+        
+        textarea {
+            min-height: 150px;
+            resize: vertical;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+        }
+        
+        .data-table-container {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .data-table th {
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            text-align: left;
+            position: sticky;
+            top: 0;
+        }
+        
+        .data-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .data-table tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        
+        .data-table tr:hover {
+            background: #e3f2fd;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(46, 204, 113, 0.3);
+        }
+        
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.3);
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 600;
+            color: #2c3e50;
+            margin: 5px 0;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+        
+        .chart-container {
+            width: 100%;
+            height: 300px;
+            margin: 20px 0;
+            position: relative;
+        }
+        
+        .report-preview {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            min-height: 300px;
+            max-height: 500px;
+            overflow-y: auto;
+            font-family: 'Times New Roman', Times, serif;
+            line-height: 1.6;
+        }
+        
+        .report-header {
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 20px;
+        }
+        
+        .report-section {
+            margin-bottom: 25px;
+        }
+        
+        .report-section h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .message {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            z-index: 1000;
+            opacity: 0;
+            transform: translateX(100px);
+            transition: all 0.3s ease;
+        }
+        
+        .message.show {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        .message.success {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+        
+        .message.error {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+        
+        .message.info {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            border-top: 1px solid #e2e8f0;
+            margin-top: 30px;
+        }
+        
+        .data-format-example {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9em;
+            margin-top: 5px;
+            color: #666;
+        }
+        
+        .control-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .tab-buttons {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: 8px;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+        
+        .tab-button {
+            padding: 10px 20px;
+            border: none;
+            background: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+        
+        .tab-button.active {
+            background: white;
+            color: #3498db;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧪 实验数据处理与报告生成系统</h1>
+            <p class="subtitle">基于HTML5的数据处理、分析、可视化与报告生成平台</p>
+        </header>
+        
+        <div class="main-content">
+            <!-- 左侧：数据输入与处理 -->
+            <div class="section">
+                <h2 class="section-title">📊 数据输入与处理</h2>
+                
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="switchTab('manual-tab')">手动输入</button>
+                    <button class="tab-button" onclick="switchTab('import-tab')">导入数据</button>
+                    <button class="tab-button" onclick="switchTab('sample-tab')">示例数据</button>
+                </div>
+                
+                <div id="manual-tab" class="tab-content active">
+                    <div class="input-group">
+                        <label for="experiment-title">实验名称：</label>
+                        <input type="text" id="experiment-title" placeholder="请输入实验名称" value="光学透射率测量实验">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="experiment-date">实验日期：</label>
+                        <input type="date" id="experiment-date" value="2024-01-15">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="researcher">实验人员：</label>
+                        <input type="text" id="researcher" placeholder="请输入实验人员姓名" value="张三, 李四">
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="data-input">实验数据（每行一组，用逗号分隔）：</label>
+                        <textarea id="data-input" placeholder="示例：
+波长(nm),透射率(%),误差
+400,85.2,1.2
+450,88.5,0.9
+500,92.1,0.8
+550,89.8,1.1
+600,86.3,1.3
+650,82.7,1.5
+700,79.4,1.6">波长(nm),透射率(%),误差
+400,85.2,1.2
+450,88.5,0.9
+500,92.1,0.8
+550,89.8,1.1
+600,86.3,1.3
+650,82.7,1.5
+700,79.4,1.6</textarea>
+                        <div class="data-format-example">格式：列名用逗号分隔，每行一组数据，支持多列数据</div>
+                    </div>
+                </div>
+                
+                <div id="import-tab" class="tab-content">
+                    <div class="input-group">
+                        <label for="file-upload">选择数据文件（CSV或TXT）：</label>
+                        <input type="file" id="file-upload" accept=".csv,.txt" style="padding: 8px; border: 2px dashed #3498db;">
+                        <div class="data-format-example">支持CSV和纯文本文件，请确保数据格式正确</div>
+                    </div>
+                </div>
+                
+                <div id="sample-tab" class="tab-content">
+                    <div class="input-group">
+                        <label>选择示例数据集：</label>
+                        <select id="sample-dataset" style="margin-bottom: 10px;" onchange="loadSampleData()">
+                            <option value="optical">光学透射率数据</option>
+                            <option value="temperature">温度-电阻率数据</option>
+                            <option value="chemical">化学反应速率数据</option>
+                            <option value="biological">生物生长曲线数据</option>
+                        </select>
+                        <div class="data-format-example">选择预置的示例数据集进行快速体验</div>
+                    </div>
+                </div>
+                
+                <div class="control-bar">
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="processData()">
+                            <span>🔧 处理数据</span>
+                        </button>
+                        <button class="btn btn-danger" onclick="clearData()">
+                            <span>🗑️ 清除数据</span>
+                        </button>
+                    </div>
+                    
+                    <button class="btn btn-success" onclick="addDataRow()">
+                        <span>➕ 添加数据行</span>
+                    </button>
+                </div>
+                
+                <div class="data-table-container">
+                    <table class="data-table" id="data-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>波长 (nm)</th>
+                                <th>透射率 (%)</th>
+                                <th>误差</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="data-table-body">
+                            <!-- 数据行将由JavaScript动态生成 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div class="stats-grid" id="stats-container">
+                    <!-- 统计数据将由JavaScript动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 右侧：分析与报告 -->
+            <div class="section">
+                <h2 class="section-title">📈 数据分析与报告</h2>
+                
+                <div class="input-group">
+                    <label for="analysis-method">分析方法：</label>
+                    <select id="analysis-method" onchange="updateAnalysis()">
+                        <option value="linear">线性回归分析</option>
+                        <option value="average">平均值与标准差</option>
+                        <option value="correlation">相关性分析</option>
+                        <option value="trend">趋势分析</option>
+                    </select>
+                </div>
+                
+                <div class="chart-container">
+                    <canvas id="data-chart"></canvas>
+                </div>
+                
+                <div class="input-group">
+                    <label for="conclusion">实验结论：</label>
+                    <textarea id="conclusion" placeholder="请输入实验结论和分析...">通过测量不同波长下的透射率，我们发现：
+1. 在500nm波长处透射率达到最大值92.1%
+2. 透射率与波长呈二次函数关系
+3. 误差范围在0.8%-1.6%之间，测量结果可靠
+4. 材料在500-550nm波段表现出最佳透光性</textarea>
+                </div>
+                
+                <div class="input-group">
+                    <label>报告预览：</label>
+                    <div class="report-preview" id="report-preview">
+                        <!-- 报告预览内容将由JavaScript动态生成 -->
+                    </div>
+                </div>
+                
+                <div class="button-group" style="margin-top: 20px;">
+                    <button class="btn btn-primary" onclick="updateReport()">
+                        <span>🔄 更新报告</span>
+                    </button>
+                    <button class="btn btn-success" onclick="generateReport()">
+                        <span>📥 生成报告文件</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="printReport()">
+                        <span>🖨️ 打印报告</span>
+                    </button>
+                    <button class="btn btn-primary" onclick="saveToLocal()">
+                        <span>💾 保存到本地</span>
+                    </button>
+                </div>
+                
+                <div class="loading" id="loading">
+                    <div class="spinner"></div>
+                    <p>正在处理数据，请稍候...</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2024 实验数据处理与报告生成系统 | 基于 HTML5 构建</p>
+            <p style="font-size: 0.9em; margin-top: 5px;">本系统支持数据输入、处理、可视化分析和报告生成功能</p>
+        </footer>
+    </div>
+    
+    <div class="message" id="message"></div>
+
+    <!-- 引入Chart.js库用于图表绘制 -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        // 全局变量
+        let experimentData = [];
+        let chart = null;
+        let reportData = {
+            title: '',
+            date: '',
+            researcher: '',
+            data: [],
+            stats: {},
+            conclusion: ''
+        };
+        
+        // 页面加载时初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            processData(); // 处理示例数据
+            updateReport(); // 更新报告预览
+            loadFromLocalStorage(); // 从本地存储加载数据
+        });
+        
+        // 切换标签页
+        function switchTab(tabId) {
+            // 移除所有标签页的active类
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // 激活选中的标签页
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // 加载示例数据
+        function loadSampleData() {
+            const sampleType = document.getElementById('sample-dataset').value;
+            let dataInput = '';
+            
+            switch(sampleType) {
+                case 'optical':
+                    document.getElementById('experiment-title').value = '光学透射率测量实验';
+                    dataInput = `波长(nm),透射率(%),误差\n400,85.2,1.2\n450,88.5,0.9\n500,92.1,0.8\n550,89.8,1.1\n600,86.3,1.3\n650,82.7,1.5\n700,79.4,1.6`;
+                    break;
+                case 'temperature':
+                    document.getElementById('experiment-title').value = '温度-电阻率关系实验';
+                    dataInput = `温度(℃),电阻率(Ω·m),误差\n0,1.59,0.05\n20,1.72,0.04\n40,1.85,0.05\n60,2.01,0.06\n80,2.18,0.07\n100,2.36,0.08`;
+                    break;
+                case 'chemical':
+                    document.getElementById('experiment-title').value = '化学反应速率实验';
+                    dataInput = `时间(s),浓度(mol/L),误差\n0,1.00,0.01\n10,0.85,0.02\n20,0.72,0.02\n30,0.61,0.01\n40,0.52,0.02\n50,0.44,0.01`;
+                    break;
+                case 'biological':
+                    document.getElementById('experiment-title').value = '细菌生长曲线实验';
+                    dataInput = `时间(h),OD600,误差\n0,0.05,0.01\n2,0.12,0.02\n4,0.35,0.03\n6,0.78,0.04\n8,1.25,0.05\n10,1.85,0.06\n12,2.10,0.07`;
+                    break;
+            }
+            
+            document.getElementById('data-input').value = dataInput;
+            processData();
+            showMessage('已加载示例数据', 'success');
+        }
+        
+        // 处理数据
+        function processData() {
+            const loading = document.getElementById('loading');
+            loading.classList.add('active');
+            
+            setTimeout(() => {
+                try {
+                    const dataText = document.getElementById('data-input').value.trim();
+                    if (!dataText) {
+                        throw new Error('请输入实验数据');
+                    }
+                    
+                    const lines = dataText.split('\n').filter(line => line.trim());
+                    if (lines.length < 2) {
+                        throw new Error('数据格式错误，请确保包含标题行和数据行');
+                    }
+                    
+                    const headers = lines[0].split(',').map(h => h.trim());
+                    experimentData = [];
+                    
+                    for (let i = 1; i < lines.length; i++) {
+                        const values = lines[i].split(',').map(v => parseFloat(v.trim()));
+                        if (values.length === headers.length) {
+                            const row = {};
+                            headers.forEach((header, index) => {
+                                row[header] = values[index];
+                            });
+                            experimentData.push(row);
+                        }
+                    }
+                    
+                    if (experimentData.length === 0) {
+                        throw new Error('未找到有效数据，请检查数据格式');
+                    }
+                    
+                    updateDataTable();
+                    calculateStatistics();
+                    drawChart();
+                    saveToLocalStorage();
+                    
+                    showMessage(`成功处理 ${experimentData.length} 行数据`, 'success');
+                } catch (error) {
+                    showMessage('数据处理错误: ' + error.message, 'error');
+                } finally {
+                    loading.classList.remove('active');
+                }
+            }, 800);
+        }
+        
+        // 更新数据表格
+        function updateDataTable() {
+            const tbody = document.getElementById('data-table-body');
+            tbody.innerHTML = '';
+            
+            // 更新表头
+            const headers = Object.keys(experimentData[0] || {});
+            const thead = document.querySelector('#data-table thead tr');
+            thead.innerHTML = '<th>#</th>' + headers.map(h => `<th>${h}</th>`).join('') + '<th>操作</th>';
+            
+            experimentData.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${index + 1}</td>
+                    ${headers.map(header => `<td>${formatNumber(row[header])}</td>`).join('')}
+                    <td>
+                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 0.9em;" onclick="deleteRow(${index})">删除</button>
+                        <button class="btn btn-primary" style="padding: 5px 10px; font-size: 0.9em; margin-left: 5px;" onclick="editRow(${index})">编辑</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+        
+        // 计算统计信息
+        function calculateStatistics() {
+            if (experimentData.length === 0) return;
+            
+            const headers = Object.keys(experimentData[0]);
+            const statsContainer = document.getElementById('stats-container');
+            statsContainer.innerHTML = '';
+            
+            headers.forEach(header => {
+                const values = experimentData.map(row => row[header]).filter(v => !isNaN(v));
+                if (values.length > 0) {
+                    const sum = values.reduce((a, b) => a + b, 0);
+                    const mean = sum / values.length;
+                    const variance = values.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / values.length;
+                    const stdDev = Math.sqrt(variance);
+                    const min = Math.min(...values);
+                    const max = Math.max(...values);
+                    
+                    statsContainer.innerHTML += `
+                        <div class="stat-card">
+                            <div class="stat-label">${header} 平均值</div>
+                            <div class="stat-value">${formatNumber(mean)}</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">${header} 标准差</div>
+                            <div class="stat-value">${formatNumber(stdDev)}</div>
+                        </div>
+                    `;
+                    
+                    // 保存统计数据
+                    reportData.stats[header] = { mean, stdDev, min, max };
+                }
+            });
+        }
+        
+        // 绘制图表
+        function drawChart() {
+            if (experimentData.length === 0) return;
+            
+            const ctx = document.getElementById('data-chart').getContext('2d');
+            const headers = Object.keys(experimentData[0]);
+            const xHeader = headers[0];
+            const yHeaders = headers.slice(1);
+            
+            if (chart) {
+                chart.destroy();
+            }
+            
+            const datasets = yHeaders.map((header, index) => {
+                const colors = [
+                    'rgba(52, 152, 219, 0.7)',
+                    'rgba(46, 204, 113, 0.7)',
+                    'rgba(155, 89, 182, 0.7)',
+                    'rgba(241, 196, 15, 0.7)',
+                    'rgba(230, 126, 34, 0.7)'
+                ];
+                
+                return {
+                    label: header,
+                    data: experimentData.map(row => row[header]),
+                    borderColor: colors[index % colors.length],
+                    backgroundColor: colors[index % colors.length].replace('0.7', '0.2'),
+                    borderWidth: 2,
+                    fill: false,
+                    tension: 0.1
+                };
+            });
+            
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: experimentData.map(row => row[xHeader]),
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: document.getElementById('experiment-title').value || '实验数据图表',
+                            font: { size: 16 }
+                        },
+                        legend: {
+                            position: 'top',
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: xHeader
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: yHeaders.join(' / ')
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        
+        // 添加数据行
+        function addDataRow() {
+            const headers = Object.keys(experimentData[0] || {});
+            if (headers.length === 0) {
+                showMessage('请先输入数据表头', 'error');
+                return;
+            }
+            
+            const newRow = {};
+            headers.forEach(header => {
+                newRow[header] = 0;
+            });
+            experimentData.push(newRow);
+            updateDataTable();
+            showMessage('已添加新数据行', 'success');
+        }
+        
+        // 删除数据行
+        function deleteRow(index) {
+            if (confirm('确定要删除这行数据吗？')) {
+                experimentData.splice(index, 1);
+                updateDataTable();
+                calculateStatistics();
+                drawChart();
+                showMessage('已删除数据行', 'success');
+            }
+        }
+        
+        // 编辑数据行
+        function editRow(index) {
+            const row = experimentData[index];
+            const headers = Object.keys(row);
+            let editForm = '<div style="max-width: 500px;">';
+            
+            headers.forEach(header => {
+                editForm += `
+                    <div class="input-group">
+                        <label>${header}:</label>
+                        <input type="number" id="edit-${header}" value="${row[header]}" 
+                               step="0.001" style="margin-bottom: 10px;">
+                    </div>
+                `;
+            });
+            
+            editForm += '</div>';
+            
+            if (confirm(`编辑第 ${index + 1} 行数据？`)) {
+                const newValues = {};
+                headers.forEach(header => {
+                    const input = document.getElementById(`edit-${header}`);
+                    if (input) {
+                        newValues[header] = parseFloat(input.value) || 0;
+                    }
+                });
+                
+                experimentData[index] = newValues;
+                updateDataTable();
+                calculateStatistics();
+                drawChart();
+                showMessage('已更新数据行', 'success');
+            }
+        }
+        
+        // 更新分析
+        function updateAnalysis() {
+            const method = document.getElementById('analysis-method').value;
+            let analysisResult = '';
+            
+            switch(method) {
+                case 'linear':
+                    analysisResult = '线性回归分析：计算最佳拟合直线方程和R²值';
+                    break;
+                case 'average':
+                    analysisResult = '平均值与标准差：计算数据的集中趋势和离散程度';
+                    break;
+                case 'correlation':
+                    analysisResult = '相关性分析：计算变量间的相关系数';
+                    break;
+                case 'trend':
+                    analysisResult = '趋势分析：识别数据的变化趋势';
+                    break;
+            }
+            
+            showMessage(`已切换到${analysisResult}`, 'info');
+        }
+        
+        // 更新报告预览
+        function updateReport() {
+            const title = document.getElementById('experiment-title').value || '未命名实验';
+            const date = document.getElementById('experiment-date').value || '未设置日期';
+            const researcher = document.getElementById('researcher').value || '未指定';
+            const conclusion = document.getElementById('conclusion').value || '无';
+            
+            reportData = {
+                title,
+                date,
+                researcher,
+                data: experimentData,
+                stats: reportData.stats,
+                conclusion
+            };
+            
+            const preview = document.getElementById('report-preview');
+            preview.innerHTML = `
+                <div class="report-header">
+                    <h2>${title} 实验报告</h2>
+                    <p>实验日期：${date} | 实验人员：${researcher}</p>
+                </div>
+                
+                <div class="report-section">
+                    <h3>一、实验目的</h3>
+                    <p>本实验旨在通过测量和分析实验数据，验证相关理论和假设。</p>
+                </div>
+                
+                <div class="report-section">
+                    <h3>二、实验数据</h3>
+                    <p>共采集 ${experimentData.length} 组有效数据，具体如下：</p>
+                    <div style="overflow-x: auto; margin: 15px 0;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                            <thead>
+                                <tr style="background: #3498db; color: white;">
+                                    <th style="padding: 8px; border: 1px solid #ddd;">序号</th>
+                                    ${Object.keys(experimentData[0] || {}).map(h => 
+                                        `<th style="padding: 8px; border: 1px solid #ddd;">${h}</th>`
+                                    ).join('')}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${experimentData.map((row, index) => `
+                                    <tr style="background: ${index % 2 === 0 ? '#f9f9f9' : 'white'};">
+                                        <td style="padding: 8px; border: 1px solid #ddd;">${index + 1}</td>
+                                        ${Object.values(row).map(value => 
+                                            `<td style="padding: 8px; border: 1px solid #ddd;">${formatNumber(value)}</td>`
+                                        ).join('')}
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="report-section">
+                    <h3>三、数据分析结果</h3>
+                    ${Object.entries(reportData.stats).map(([key, stat]) => `
+                        <p><strong>${key} 统计结果：</strong><br>
+                        平均值：${formatNumber(stat.mean)}<br>
+                        标准差：${formatNumber(stat.stdDev)}<br>
+                        最小值：${formatNumber(stat.min)}<br>
+                        最大值：${formatNumber(stat.max)}</p>
+                    `).join('')}
+                </div>
+                
+                <div class="report-section">
+                    <h3>四、实验结论</h3>
+                    <p>${conclusion.replace(/\n/g, '<br>')}</p>
+                </div>
+                
+                <div class="report-section">
+                    <h3>五、报告生成信息</h3>
+                    <p>报告生成时间：${new Date().toLocaleString('zh-CN')}<br>
+                    </p>
+                </div>
+            `;
+            
+            saveToLocalStorage();
+        }
+        
+        // 生成报告文件
+        function generateReport() {
+            updateReport();
+            
+            const reportContent = `
+实验报告
+========
+
+实验名称：${reportData.title}
+实验日期：${reportData.date}
+实验人员：${reportData.researcher}
+生成时间：${new Date().toLocaleString('zh-CN')}
+
+一、实验目的
+------------
+本实验旨在通过测量和分析实验数据，验证相关理论和假设。
+
+二、实验数据
+------------
+共采集 ${reportData.data.length} 组有效数据：
+
+${formatDataAsText(reportData.data)}
+
+三、数据分析结果
+----------------
+${Object.entries(reportData.stats).map(([key, stat]) => `
+${key} 统计结果：
+  平均值：${formatNumber(stat.mean)}
+  标准差：${formatNumber(stat.stdDev)}
+  最小值：${formatNumber(stat.min)}
+  最大值：${formatNumber(stat.max)}
+`).join('\n')}
+
+四、实验结论
+------------
+${reportData.conclusion}
+
+五、备注
+--------
+本报告由实验数据处理与报告生成系统自动生成。
+            `.trim();
+            
+            const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${reportData.title.replace(/\s+/g, '_')}_实验报告_${new Date().toISOString().slice(0, 10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showMessage('报告文件已生成并开始下载', 'success');
+        }
+        
+        // 格式化数据为文本
+        function formatDataAsText(data) {
+            if (data.length === 0) return '无数据';
+            
+            const headers = Object.keys(data[0]);
+            const headerRow = headers.join('\t');
+            const dataRows = data.map((row, index) => 
+                `${index + 1}\t` + headers.map(h => formatNumber(row[h])).join('\t')
+            ).join('\n');
+            
+            return `序号\t${headerRow}\n${dataRows}`;
+        }
+        
+        // 打印报告
+        function printReport() {
+            updateReport();
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${reportData.title} 实验报告</title>
+                    <style>
+                        body { font-family: 'SimSun', serif; padding: 20px; }
+                        h1, h2, h3 { color: #000; }
+                        table { border-collapse: collapse; width: 100%; margin: 15px 0; }
+                        th, td { border: 1px solid #000; padding: 8px; text-align: center; }
+                        th { background: #f0f0f0; }
+                        .report-header { text-align: center; margin-bottom: 30px; }
+                        .page-break { page-break-before: always; }
+                        @media print {
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${document.getElementById('report-preview').innerHTML}
+                    <div class="no-print" style="margin-top: 30px; text-align: center;">
+                        <button onclick="window.print()">打印报告</button>
+                        <button onclick="window.close()">关闭窗口</button>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+        
+        // 保存到本地存储
+        function saveToLocalStorage() {
+            try {
+                const saveData = {
+                    experimentData,
+                    title: document.getElementById('experiment-title').value,
+                    date: document.getElementById('experiment-date').value,
+                    researcher: document.getElementById('researcher').value,
+                    conclusion: document.getElementById('conclusion').value,
+                    stats: reportData.stats,
+                    timestamp: new Date().getTime()
+                };
+                localStorage.setItem('experimentReportData', JSON.stringify(saveData));
+            } catch (error) {
+                console.warn('本地存储失败:', error);
+            }
+        }
+        
+        // 从本地存储加载
+        function loadFromLocalStorage() {
+            try {
+                const saved = localStorage.getItem('experimentReportData');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if (data.experimentData && data.experimentData.length > 0) {
+                        experimentData = data.experimentData;
+                        document.getElementById('experiment-title').value = data.title || '';
+                        document.getElementById('experiment-date').value = data.date || '';
+                        document.getElementById('researcher').value = data.researcher || '';
+                        document.getElementById('conclusion').value = data.conclusion || '';
+                        reportData.stats = data.stats || {};
+                        
+                        updateDataTable();
+                        calculateStatistics();
+                        drawChart();
+                        showMessage('已恢复上次保存的数据', 'success');
+                    }
+                }
+            } catch (error) {
+                console.warn('加载本地存储数据失败:', error);
+            }
+        }
+        
+        // 保存到本地（增强版）
+        function saveToLocal() {
+            saveToLocalStorage();
+            const blob = new Blob([JSON.stringify({
+                experimentData,
+                reportData,
+                timestamp: new Date().toISOString()
+            }, null, 2)], { type: 'application/json' });
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `experiment_backup_${new Date().getTime()}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showMessage('数据已保存到本地文件', 'success');
+        }
+        
+        // 清除数据
+        function clearData() {
+            if (confirm('确定要清除所有数据吗？')) {
+                experimentData = [];
+                document.getElementById('data-input').value = '';
+                document.getElementById('data-table-body').innerHTML = '';
+                document.getElementById('stats-container').innerHTML = '';
+                document.getElementById('conclusion').value = '';
+                document.getElementById('experiment-title').value = '';
+                document.getElementById('researcher').value = '';
+                document.getElementById('report-preview').innerHTML = '';
+                
+                if (chart) {
+                    chart.destroy();
+                    chart = null;
+                }
+                
+                localStorage.removeItem('experimentReportData');
+                showMessage('所有数据已清除', 'info');
+            }
+        }
+        
+        // 文件导入处理
+        document.getElementById('file-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                try {
+                    const content = event.target.result;
+                    document.getElementById('data-input').value = content;
+                    processData();
+                    showMessage(`已导入文件: ${file.name}`, 'success');
+                } catch (error) {
+                    showMessage('文件导入失败: ' + error.message, 'error');
+                }
+            };
+            
+            reader.readAsText(file);
+        });
+        
+        // 格式化数字显示
+        function formatNumber(num) {
+            if (typeof num !== 'number' || isNaN(num)) return num;
+            return Math.abs(num) < 0.001 ? num.toExponential(4) : 
+                   Math.abs(num) < 1 ? num.toFixed(4) : 
+                   Math.abs(num) < 1000 ? num.toFixed(2) : 
+                   num.toExponential(2);
+        }
+        
+        // 显示消息
+        function showMessage(text, type) {
+            const message = document.getElementById('message');
+            message.textContent = text;
+            message.className = 'message ' + type;
+            message.classList.add('show');
+            
+            setTimeout(() => {
+                message.classList.remove('show');
+            }, 3000);
+        }
+        
+        // 自动保存功能
+        setInterval(() => {
+            if (experimentData.length > 0) {
+                saveToLocalStorage();
+            }
+        }, 30000); // 每30秒自动保存一次
+        
+        // 初始化示例数据
+        setTimeout(() => {
+            if (experimentData.length === 0) {
+                processData();
+            }
+        }, 100);
+    </script>
+</body>
+</html>
