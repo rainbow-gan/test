@@ -90,9 +90,17 @@
         }
         
         .input-group {
-            margin-bottom: 15px;
+            margin: 12px 0;
+            display:flex; /*如何*/
+            margin-right: 30px;
+            gap: 16px;
+
         }
         
+        .input-group label{
+            white-space: nowrap;
+        }
+
         label {
             display: block;
             margin-bottom: 8px;
@@ -247,7 +255,7 @@
             margin: 20px 0;
             position: relative;
         }
-        
+
         .report-preview {
             background: white;
             padding: 20px;
@@ -359,7 +367,12 @@
             flex-wrap: wrap;
             gap: 10px;
         }
-        
+
+        .textarea-title-input{
+            line-height: 1.5;
+            min-height: 10px;
+        }
+
         .tab-buttons {
             display: flex;
             background: #f1f5f9;
@@ -398,7 +411,7 @@
     <div class="container">
         <header>
             <h1>🧪 实验数据处理与报告生成系统</h1>
-            <p class="subtitle">基于HTML5的数据处理、分析、可视化与报告生成平台</p>
+
         </header>
         
         <div class="main-content">
@@ -413,39 +426,45 @@
                 </div>
                 
                 <div id="manual-tab" class="tab-content active">
-                    <div class="input-group">
+                    <div class="input-group"><!--实验名称-->
                         <label for="experiment-title">实验名称：</label>
-                        <input type="text" id="experiment-title" placeholder="请输入实验名称" value="光学透射率测量实验">
+                        <input type="text" id="experiment-title" placeholder="请输入实验名称" value="RTD温度测量基本精度">
+                    </div>
+                    <div class="input-group"><!--实验名称-->
+                        <label for="test-mode">测试方式：</label>
+                        <input type="text" id="test-mode" placeholder="请输入实验名称" value="使用高精度标准电阻源模拟PT100/PT1000等热电阻，在基准条件（25°C, 满电）​下，全温度量程内选取多个特征点测试，​计算温度示值误差。">
+                    </div>                    
+                    <div class="input-group"><!--实验要求-->
+                        <label for="experimental-indicators">实验指标：</label>
+                        <input type="text" id="experimental-indicators" placeholder="请输入实验指标" value="误差 ≤ ±(0.1°C + 0.001×|t|) 或更严苛指标（如±0.05°C）">
+                    </div>
+                    <div class="input-group"><!--实验日期-->
+                        <label for="experiment-start-date">实验起始日期：</label>
+                        <input type="datetime-local" id="experiment-start-date" value="2024-01-15T00:00:01">
+                        <label>——</label>
+                        <label for="experiment-end-date">实验结束日期：</label>
+                        <input type="datetime-local" id="experiment-end-date" value="2024-01-15T23:59:59">
                     </div>
                     
-                    <div class="input-group">
-                        <label for="experiment-date">实验日期：</label>
-                        <input type="date" id="experiment-date" value="2024-01-15">
-                    </div>
-                    
-                    <div class="input-group">
+                    <div class="input-group"><!--实验人员-->
                         <label for="researcher">实验人员：</label>
-                        <input type="text" id="researcher" placeholder="请输入实验人员姓名" value="张三, 李四">
+                        <input type="text" id="researcher" placeholder="请输入实验人员姓名" value="陈思佳">
                     </div>
                     
-                    <div class="input-group">
-                        <label for="data-input">实验数据（每行一组，用逗号分隔）：</label>
-                        <textarea id="data-input" placeholder="示例：
-波长(nm),透射率(%),误差
-400,85.2,1.2
-450,88.5,0.9
-500,92.1,0.8
-550,89.8,1.1
-600,86.3,1.3
-650,82.7,1.5
-700,79.4,1.6">波长(nm),透射率(%),误差
-400,85.2,1.2
-450,88.5,0.9
-500,92.1,0.8
-550,89.8,1.1
-600,86.3,1.3
-650,82.7,1.5
-700,79.4,1.6</textarea>
+                    <div class = "input-group"><!--实验标题-->
+                        <label id = "experimenttal date" for="data-input">实验标题：</label>
+                    </div>
+                    <div>
+                        <textarea id="experiment-title-data" placeholder="输入样品SN号" class = "textarea-title-input">example
+                        </textarea>
+                    </div>
+                    <div class = "input-group"><!--显示标题“实验数据”-->
+                        <label id = "experimenttal data" for="data-input">实验数据：</label>
+                    </div>
+
+                    <div>
+                        <textarea id="data-input" placeholder="将excel中需要处理的数据复制粘贴到此处">30.0000
+                        </textarea>
                         <div class="data-format-example">格式：列名用逗号分隔，每行一组数据，支持多列数据</div>
                     </div>
                 </div>
@@ -528,11 +547,8 @@
                 
                 <div class="input-group">
                     <label for="conclusion">实验结论：</label>
-                    <textarea id="conclusion" placeholder="请输入实验结论和分析...">通过测量不同波长下的透射率，我们发现：
-1. 在500nm波长处透射率达到最大值92.1%
-2. 透射率与波长呈二次函数关系
-3. 误差范围在0.8%-1.6%之间，测量结果可靠
-4. 材料在500-550nm波段表现出最佳透光性</textarea>
+                    <textarea id="conclusion" placeholder="请输入实验结论和分析...">请输入实验结论和分析...
+                    </textarea>
                 </div>
                 
                 <div class="input-group">
@@ -646,21 +662,28 @@
             
             setTimeout(() => {
                 try {
-                    const dataText = document.getElementById('data-input').value.trim();
+                    const data_input = document.getElementById('data-input').value.trim();//value is used to delete the spaces in the beginning and end.
+                    const experimentTitle = document.getElementById('experiment-title-data').value.trim();
+                    const title_dataText = experimentTitle.replace(/\t/g, ',');     // Tab 转 CSV 分隔符
+                    const dataText = data_input.replace(/\t/g, ',');
+                    if (!experimentTitle) {
+                        throw new Error('请输入实验标题'); // 如果没有输入显示“请输入实验标题”
+                    }
                     if (!dataText) {
-                        throw new Error('请输入实验数据');
+                        throw new Error('请输入实验数据'); // 如果没有输入显示“请输入实验数据”
+                    }
+                    const lines = dataText.split('\n').filter(line => line.trim()); //split is used to split the data into lines.
+                    const lines_title = title_dataText.split('\n').filter(lines_title => lines_title.trim());
+                    //filter 函数用以保留最后为真值的函数
+                    if (lines.length < 1) {
+                        throw new Error('数据格式错误，请确保包含标题行和数据行'); // 如果数据格式错误显示“数据格式错误，请确保包含标题行和数据行”
                     }
                     
-                    const lines = dataText.split('\n').filter(line => line.trim());
-                    if (lines.length < 2) {
-                        throw new Error('数据格式错误，请确保包含标题行和数据行');
-                    }
-                    
-                    const headers = lines[0].split(',').map(h => h.trim());
+                    const headers = lines_title[0].split(',').map(h => h.trim());
                     experimentData = [];
                     
-                    for (let i = 1; i < lines.length; i++) {
-                        const values = lines[i].split(',').map(v => parseFloat(v.trim()));
+                    for (let i = 0; i < lines.length; i++) {
+                        const values = lines[i].split(',').map(v => parseFloat(v.trim()));//parseFloat 将函数转换为浮点数
                         if (values.length === headers.length) {
                             const row = {};
                             headers.forEach((header, index) => {
@@ -729,16 +752,24 @@
                     const stdDev = Math.sqrt(variance);
                     const min = Math.min(...values);
                     const max = Math.max(...values);
-                    
+                    const fluctuation = max - min;
                     statsContainer.innerHTML += `
                         <div class="stat-card">
                             <div class="stat-label">${header} 平均值</div>
                             <div class="stat-value">${formatNumber(mean)}</div>
                         </div>
                         <div class="stat-card">
-                            <div class="stat-label">${header} 标准差</div>
-                            <div class="stat-value">${formatNumber(stdDev)}</div>
+                            <div class="stat-label">${header} 波动度</div>
+                            <div class="stat-value">${formatNumber(fluctuation)}</div>
                         </div>
+                        <div class="stat-card">
+                            <div class="stat-label">${header} 最大值</div>
+                            <div class="stat-value">${formatNumber(max)}</div>
+                        </div>         
+                        <div class="stat-card">
+                            <div class="stat-label">${header} 最小值</div>
+                            <div class="stat-value">${formatNumber(min)}</div>
+                        </div>                                          
                     `;
                     
                     // 保存统计数据
@@ -754,14 +785,14 @@
             const ctx = document.getElementById('data-chart').getContext('2d');
             const headers = Object.keys(experimentData[0]);
             const xHeader = headers[0];
-            const yHeaders = headers.slice(1);
+            const yHeaders = headers.slice(1);//
             
-            if (chart) {
+            if (chart) { //如果图表存在，就销毁图表
                 chart.destroy();
             }
             
             const datasets = yHeaders.map((header, index) => {
-                const colors = [
+                const colors = [//预定义颜色池用于绘制图像
                     'rgba(52, 152, 219, 0.7)',
                     'rgba(46, 204, 113, 0.7)',
                     'rgba(155, 89, 182, 0.7)',
@@ -769,14 +800,14 @@
                     'rgba(230, 126, 34, 0.7)'
                 ];
                 
-                return {
-                    label: header,
-                    data: experimentData.map(row => row[header]),
+                return {//返回数据集对象
+                    label: header,//设置这条线在图例中的名字
+                    data: experimentData.map(row => row[header]),//从每行数据里提取对应的值
                     borderColor: colors[index % colors.length],
                     backgroundColor: colors[index % colors.length].replace('0.7', '0.2'),
                     borderWidth: 2,
                     fill: false,
-                    tension: 0.1
+                    tension: 0.1// tension: 0.1 设置曲线的平滑度，值越小曲线越平滑
                 };
             });
             
@@ -986,9 +1017,15 @@
         
         // 生成报告文件
         function generateReport() {
-            updateReport();
-            
-            const reportContent = `
+            try {
+                updateReport();
+                const safeStats = reportData.stats || {};
+                const safeData = reportData.data || [];
+                const safeTitle = (reportData.title || '实验报告')
+                    .replace(/[\\/:*?"<>|]/g, '_')
+                    .replace(/\s+/g, '_');
+                
+                const reportContent = `
 实验报告
 ========
 
@@ -1003,13 +1040,13 @@
 
 二、实验数据
 ------------
-共采集 ${reportData.data.length} 组有效数据：
+共采集 ${safeData.length} 组有效数据：
 
-${formatDataAsText(reportData.data)}
+${formatDataAsText(safeData)}
 
 三、数据分析结果
 ----------------
-${Object.entries(reportData.stats).map(([key, stat]) => `
+${Object.entries(safeStats).map(([key, stat]) => `
 ${key} 统计结果：
   平均值：${formatNumber(stat.mean)}
   标准差：${formatNumber(stat.stdDev)}
@@ -1024,19 +1061,27 @@ ${reportData.conclusion}
 五、备注
 --------
 本报告由实验数据处理与报告生成系统自动生成。
-            `.trim();
-            
-            const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `${reportData.title.replace(/\s+/g, '_')}_实验报告_${new Date().toISOString().slice(0, 10)}.txt`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showMessage('报告文件已生成并开始下载', 'success');
+                `.trim();
+                
+                const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${safeTitle}_实验报告_${new Date().toISOString().slice(0, 10)}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                
+                // 延迟回收 URL，避免部分环境下下载被提前中断
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 1000);
+                
+                showMessage('报告文件已生成并开始下载', 'success');
+            } catch (error) {
+                console.error('生成报告失败:', error);
+                showMessage('生成报告失败: ' + error.message, 'error');
+            }
         }
         
         // 格式化数据为文本
@@ -1197,7 +1242,7 @@ ${reportData.conclusion}
             if (typeof num !== 'number' || isNaN(num)) return num;
             return Math.abs(num) < 0.001 ? num.toExponential(4) : 
                    Math.abs(num) < 1 ? num.toFixed(4) : 
-                   Math.abs(num) < 1000 ? num.toFixed(2) : 
+                   Math.abs(num) < 1000 ? num.toFixed(5) : 
                    num.toExponential(2);
         }
         
