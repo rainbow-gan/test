@@ -257,15 +257,102 @@
         }
 
         .report-preview {
-            background: white;
-            padding: 20px;
+            width: 100%;
+            background: #d9d9d9;
+            padding: 0;
             border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            min-height: 300px;
-            max-height: 500px;
+            border: 1px solid #c0c0c0;
+            min-height: 320px;
+            max-height: 560px;
             overflow-y: auto;
-            font-family: 'Times New Roman', Times, serif;
-            line-height: 1.6;
+        }
+
+        /* Word 版式：灰底 + A4 白页 */
+        .word-preview-shell {
+            padding: 20px 12px 28px;
+            min-height: 300px;
+        }
+
+        .word-page {
+            background: #fff;
+            max-width: 21cm;
+            min-height: 29.7cm;
+            margin: 0 auto;
+            padding: 2.54cm 3.17cm;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18), 0 0 1px rgba(0, 0, 0, 0.08);
+            font-family: "Calibri", "Microsoft YaHei", "SimSun", "宋体", serif;
+            font-size: 11pt;
+            line-height: 1.5;
+            color: #000000;
+        }
+
+        .word-page .report-header {
+            text-align: center;
+            margin-bottom: 24pt;
+            border-bottom: 0.75pt solid #000000;
+            padding-bottom: 12pt;
+        }
+
+        .word-page .report-header h2 {
+            font-size: 18pt;
+            font-weight: bold;
+            margin: 0 0 10pt;
+            color: #000000;
+        }
+
+        .word-page .report-header p {
+            font-size: 11pt;
+            margin: 0;
+            color: #000000;
+        }
+
+        .word-page .report-section {
+            margin-bottom: 18pt;
+        }
+
+        .word-page .report-section h3 {
+            font-size: 14pt;
+            font-weight: bold;
+            color: #000000;
+            margin: 0 0 8pt;
+            padding: 0 0 4pt;
+            border-bottom: 0.5pt solid #808080;
+        }
+
+        .word-page .report-section p {
+            margin: 0 0 8pt;
+            text-align: justify;
+        }
+
+        .word-page table {
+            border-collapse: collapse;
+            width: 100%;
+            font-size: 10.5pt;
+        }
+
+        .word-page table th,
+        .word-page table td {
+            border: 0.5pt solid #000000;
+            padding: 6pt 8pt;
+            text-align: center;
+        }
+
+        .word-page table thead tr {
+            background: #f2f2f2 !important;
+            color: #000000 !important;
+        }
+
+        .word-page table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .word-page table tbody tr:nth-child(odd) {
+            background: #ffffff;
+        }
+
+        .word-page .report-data-table {
+            width: 100%;
+            border-collapse: collapse;
         }
         
         .report-header {
@@ -405,6 +492,7 @@
         .tab-content.active {
             display: block;
         }
+        
     </style>
 </head>
 <body>
@@ -552,7 +640,7 @@
                 </div>
                 
                 <div class="input-group">
-                    <label>报告预览：</label>
+                    <label>报告预览（Word 版式）：</label>
                     <div class="report-preview" id="report-preview">
                         <!-- 报告预览内容将由JavaScript动态生成 -->
                     </div>
@@ -563,7 +651,7 @@
                         <span>🔄 更新报告</span>
                     </button>
                     <button class="btn btn-success" onclick="generateReport()">
-                        <span>📥 生成报告文件</span>
+                        <span>📥 下载 Word 报告（.doc）</span>
                     </button>
                     <button class="btn btn-primary" onclick="printReport()">
                         <span>🖨️ 打印报告</span>
@@ -937,7 +1025,7 @@
         // 更新报告预览
         function updateReport() {
             const title = document.getElementById('experiment-title').value || '未命名实验';
-            const date = document.getElementById('experiment-date').value || '未设置日期';
+            const date = document.getElementById('experiment-start-date').value || '未设置日期';
             const researcher = document.getElementById('researcher').value || '未指定';
             const conclusion = document.getElementById('conclusion').value || '无';
             
@@ -952,9 +1040,11 @@
             
             const preview = document.getElementById('report-preview');
             preview.innerHTML = `
+                <div class="word-preview-shell">
+                <div class="word-page">
                 <div class="report-header">
                     <h2>${title} 实验报告</h2>
-                    <p>实验日期：${date} | 实验人员：${researcher}</p>
+                    <p>实验日期：${date}　实验人员：${researcher}</p>
                 </div>
                 
                 <div class="report-section">
@@ -965,22 +1055,22 @@
                 <div class="report-section">
                     <h3>二、实验数据</h3>
                     <p>共采集 ${experimentData.length} 组有效数据，具体如下：</p>
-                    <div style="overflow-x: auto; margin: 15px 0;">
-                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+                    <div style="overflow-x: auto; margin: 12pt 0;">
+                        <table class="report-data-table">
                             <thead>
-                                <tr style="background: #3498db; color: white;">
-                                    <th style="padding: 8px; border: 1px solid #ddd;">序号</th>
+                                <tr>
+                                    <th>序号</th>
                                     ${Object.keys(experimentData[0] || {}).map(h => 
-                                        `<th style="padding: 8px; border: 1px solid #ddd;">${h}</th>`
+                                        `<th>${h}</th>`
                                     ).join('')}
                                 </tr>
                             </thead>
                             <tbody>
                                 ${experimentData.map((row, index) => `
-                                    <tr style="background: ${index % 2 === 0 ? '#f9f9f9' : 'white'};">
-                                        <td style="padding: 8px; border: 1px solid #ddd;">${index + 1}</td>
+                                    <tr>
+                                        <td>${index + 1}</td>
                                         ${Object.values(row).map(value => 
-                                            `<td style="padding: 8px; border: 1px solid #ddd;">${formatNumber(value)}</td>`
+                                            `<td>${formatNumber(value)}</td>`
                                         ).join('')}
                                     </tr>
                                 `).join('')}
@@ -1007,112 +1097,106 @@
                 
                 <div class="report-section">
                     <h3>五、报告生成信息</h3>
-                    <p>报告生成时间：${new Date().toLocaleString('zh-CN')}<br>
-                    </p>
+                    <p>报告生成时间：${new Date().toLocaleString('zh-CN')}</p>
+                </div>
+                </div>
                 </div>
             `;
             
             saveToLocalStorage();
         }
         
-        // 生成报告文件
+        function escapeHtml(str) {
+            return String(str ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+
+        // 生成 Word 可打开的 HTML 文档（.doc），与预览版式一致
+        function buildWordExportHtml(bodyInnerHtml) {
+            const title = escapeHtml(reportData.title || '实验报告');
+            return `<!DOCTYPE html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<meta name="ProgId" content="Word.Document">
+<meta name="Generator" content="实验数据处理与报告生成系统">
+<title>${title}</title>
+<style>
+body { font-family: Calibri, "Microsoft YaHei", SimSun, 宋体, serif; font-size: 11pt; line-height: 1.5; color: #000; margin: 2.54cm 3.17cm; }
+.report-header { text-align: center; margin-bottom: 24pt; border-bottom: 0.75pt solid #000; padding-bottom: 12pt; }
+.report-header h2 { font-size: 18pt; font-weight: bold; margin: 0 0 10pt; }
+.report-header p { font-size: 11pt; margin: 0; }
+.report-section { margin-bottom: 18pt; }
+.report-section h3 { font-size: 14pt; font-weight: bold; margin: 0 0 8pt; padding: 0 0 4pt; border-bottom: 0.5pt solid #808080; }
+.report-section p { margin: 0 0 8pt; text-align: justify; }
+table { border-collapse: collapse; width: 100%; font-size: 10.5pt; }
+th, td { border: 0.5pt solid #000; padding: 6pt 8pt; text-align: center; }
+thead tr { background: #f2f2f2; }
+tbody tr:nth-child(even) { background: #fafafa; }
+</style>
+</head>
+<body>
+${bodyInnerHtml}
+</body>
+</html>`;
+        }
+
+        // 生成报告文件（Word .doc）
         function generateReport() {
             try {
                 updateReport();
-                const safeStats = reportData.stats || {};
-                const safeData = reportData.data || [];
                 const safeTitle = (reportData.title || '实验报告')
                     .replace(/[\\/:*?"<>|]/g, '_')
                     .replace(/\s+/g, '_');
-                
-                const reportContent = `
-实验报告
-========
 
-实验名称：${reportData.title}
-实验日期：${reportData.date}
-实验人员：${reportData.researcher}
-生成时间：${new Date().toLocaleString('zh-CN')}
+                const pageEl = document.querySelector('#report-preview .word-page');
+                const bodyHtml = pageEl ? pageEl.innerHTML : document.getElementById('report-preview').innerHTML;
+                const reportContent = buildWordExportHtml(bodyHtml);
 
-一、实验目的
-------------
-本实验旨在通过测量和分析实验数据，验证相关理论和假设。
-
-二、实验数据
-------------
-共采集 ${safeData.length} 组有效数据：
-
-${formatDataAsText(safeData)}
-
-三、数据分析结果
-----------------
-${Object.entries(safeStats).map(([key, stat]) => `
-${key} 统计结果：
-  平均值：${formatNumber(stat.mean)}
-  标准差：${formatNumber(stat.stdDev)}
-  最小值：${formatNumber(stat.min)}
-  最大值：${formatNumber(stat.max)}
-`).join('\n')}
-
-四、实验结论
-------------
-${reportData.conclusion}
-
-五、备注
---------
-本报告由实验数据处理与报告生成系统自动生成。
-                `.trim();
-                
-                const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+                const blob = new Blob(['\ufeff', reportContent], { type: 'application/msword' });
                 const url = URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `${safeTitle}_实验报告_${new Date().toISOString().slice(0, 10)}.txt`;
+                a.download = `${safeTitle}_实验报告_${new Date().toISOString().slice(0, 10)}.doc`;
                 document.body.appendChild(a);
                 a.click();
-                
-                // 延迟回收 URL，避免部分环境下下载被提前中断
+
                 setTimeout(() => {
                     document.body.removeChild(a);
                     URL.revokeObjectURL(url);
                 }, 1000);
-                
-                showMessage('报告文件已生成并开始下载', 'success');
+
+                showMessage('Word 报告已生成并开始下载（可用 Microsoft Word 打开）', 'success');
             } catch (error) {
                 console.error('生成报告失败:', error);
                 showMessage('生成报告失败: ' + error.message, 'error');
             }
         }
         
-        // 格式化数据为文本
-        function formatDataAsText(data) {
-            if (data.length === 0) return '无数据';
-            
-            const headers = Object.keys(data[0]);
-            const headerRow = headers.join('\t');
-            const dataRows = data.map((row, index) => 
-                `${index + 1}\t` + headers.map(h => formatNumber(row[h])).join('\t')
-            ).join('\n');
-            
-            return `序号\t${headerRow}\n${dataRows}`;
-        }
-        
         // 打印报告
         function printReport() {
             updateReport();
+            const previewRoot = document.getElementById('report-preview');
+            const pageNode = previewRoot.querySelector('.word-page');
+            const printBody = pageNode ? pageNode.outerHTML : previewRoot.innerHTML;
             const printWindow = window.open('', '_blank');
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>${reportData.title} 实验报告</title>
+                    <title>${escapeHtml(reportData.title)} 实验报告</title>
                     <style>
-                        body { font-family: 'SimSun', serif; padding: 20px; }
+                        body { font-family: Calibri, "Microsoft YaHei", SimSun, serif; font-size: 11pt; padding: 20px; background: #fff; color: #000; }
                         h1, h2, h3 { color: #000; }
                         table { border-collapse: collapse; width: 100%; margin: 15px 0; }
-                        th, td { border: 1px solid #000; padding: 8px; text-align: center; }
-                        th { background: #f0f0f0; }
-                        .report-header { text-align: center; margin-bottom: 30px; }
+                        th, td { border: 0.5pt solid #000; padding: 6pt 8pt; text-align: center; }
+                        thead tr { background: #f2f2f2; }
+                        .report-header { text-align: center; margin-bottom: 24pt; border-bottom: 0.75pt solid #000; padding-bottom: 12pt; }
+                        .report-section { margin-bottom: 18pt; }
+                        .report-section h3 { font-size: 14pt; margin: 0 0 8pt; padding-bottom: 4pt; border-bottom: 0.5pt solid #808080; }
                         .page-break { page-break-before: always; }
                         @media print {
                             .no-print { display: none; }
@@ -1120,7 +1204,7 @@ ${reportData.conclusion}
                     </style>
                 </head>
                 <body>
-                    ${document.getElementById('report-preview').innerHTML}
+                    ${printBody}
                     <div class="no-print" style="margin-top: 30px; text-align: center;">
                         <button onclick="window.print()">打印报告</button>
                         <button onclick="window.close()">关闭窗口</button>
